@@ -27,7 +27,7 @@ def parseTestSet(path, file_type='wav'):
 
     # Dataset stats
     log.p(('FILES IN DATASET:', len(dataset)))
-    
+
     return dataset
 
 ##################### LOAD MODEL #######################
@@ -55,7 +55,7 @@ def setSpeciesList(lat, lon, week):
 
     if not week in range(1, 49):
         week = -1
-    
+
     if cfg.USE_EBIRD_CHECKLIST:
         cfg.WHITE_LIST, cfg.BLACK_LIST = grid.getSpeciesLists(lat, lon, week, cfg.EBIRD_THRESHOLD)
     else:
@@ -107,7 +107,7 @@ def getRavenSelectionTable(p, path):
 
     # Write header
     stable += header
-    
+
     # Extract valid predictions for every timestamp
     for timestamp in sorted(p):
         rstring = ''
@@ -121,8 +121,6 @@ def getRavenSelectionTable(p, path):
                 rstring += str(start) + '\t' + str(end) + '\t' + str(cfg.SPEC_FMIN) + '\t' + str(cfg.SPEC_FMAX) + '\t'
                 rstring += getCode(c[0]) + '\t' + c[0].split('_')[1] + '\t' + str(c[1]) + '\t' + str(rank) + '\n'
                 rank += 1
-            if rank > 3:
-                break
 
         # Write result string to file
         if len(rstring) > 0:
@@ -134,7 +132,7 @@ def getAudacityLabels(p, path):
 
     # Selection table
     stext = ''
-    
+
     # Extract valid predictions for every timestamp
     for timestamp in sorted(p):
         rstring = ''
@@ -148,7 +146,7 @@ def getAudacityLabels(p, path):
         if len(rstring) > 0:
             stext += rstring
 
-    return stext   
+    return stext
 
 ###################### ANALYSIS #########################
 def analyzeFile(soundscape, test_function):
@@ -162,7 +160,7 @@ def analyzeFile(soundscape, test_function):
     pred_start = 0
 
     # Set species list accordingly
-    setSpeciesList(cfg.DEPLOYMENT_LOCATION[0], cfg.DEPLOYMENT_LOCATION[1], cfg.DEPLOYMENT_WEEK)    
+    setSpeciesList(cfg.DEPLOYMENT_LOCATION[0], cfg.DEPLOYMENT_LOCATION[1], cfg.DEPLOYMENT_WEEK)
 
     # Get specs for file
     spec_batch = []
@@ -198,14 +196,14 @@ def analyzeFile(soundscape, test_function):
 
             # Calculate next timestamp
             pred_end = pred_start + cfg.SPEC_LENGTH + ((len(spec_batch) - 1) * (cfg.SPEC_LENGTH - cfg.SPEC_OVERLAP))
-            
+
             # Store prediction
             analysis[getTimestamp(pred_start, pred_end)] = p
 
             # Advance to next timestamp
             pred_start = pred_end - cfg.SPEC_OVERLAP
             spec_batch = []
-            
+
     return analysis
 
 ######################## MAIN ###########################
@@ -221,19 +219,19 @@ def process(soundscape, sid, out_dir, out_type, test_function):
     # Generate Raven selection table + Audacity text lables
     stable, dcnt = getRavenSelectionTable(p, soundscape.split(os.sep)[-1])
     atext = getAudacityLabels(p, soundscape.split(os.sep)[-1])
-    log.p(('DETECTIONS:', dcnt), new_line=False)        
+    log.p(('DETECTIONS:', dcnt), new_line=False)
 
     # Save results
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    
+
     if out_type == 'raven':
         with open(os.path.join(out_dir, os.path.splitext(soundscape.split(os.sep)[-1])[0] + '.BirdNET.selections.txt'), 'w') as stfile:
             stfile.write(stable)
 
     else:
         with open(os.path.join(out_dir, os.path.splitext(soundscape.split(os.sep)[-1])[0] + '.BirdNET.Audacity_Labels.txt'), 'w') as stfile:
-            stfile.write(atext)        
+            stfile.write(atext)
 
     # Time
     t = time.time() - start
@@ -254,7 +252,7 @@ def main():
     parser.add_argument('--overlap', type=float, default=0.0, help='Overlap in seconds between extracted spectrograms. Values in [0.0, 2.9].')
     parser.add_argument('--spp', type=int, default=1, help='Combines probabilities of multiple spectrograms to one prediction. Defaults to 1.')
     parser.add_argument('--sensitivity', type=float, default=1.0, help='Sigmoid sensitivity; Higher values result in lower sensitivity. Values in [0.25, 2.0]. Defaults to 1.0.')
-    parser.add_argument('--min_conf', type=float, default=0.1, help='Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.')
+    parser.add_argument('--min_conf', type=float, default=0, help='Minimum confidence threshold. Values in [0.01, 0.99]. Defaults to 0.1.')
 
     args = parser.parse_args()
 
@@ -272,9 +270,9 @@ def main():
         cfg.DEPLOYMENT_LOCATION = (args.lat, args.lon)
         cfg.DEPLOYMENT_WEEK = args.week
         cfg.SPEC_OVERLAP = min(2.9, max(0.0, args.overlap))
-        cfg.SPECS_PER_PREDICTION = max(1, args.spp)
+        cfg.SPECS_PER_PREDICTION = 2
         cfg.SENSITIVITY = max(min(-0.25, args.sensitivity * -1), -2.0)
-        cfg.MIN_CONFIDENCE = min(0.99, max(0.01, args.min_conf))
+        cfg.MIN_CONFIDENCE = 0
         if len(args.o) == 0:
             if os.path.isfile(args.i):
                 result_path = args.i.rsplit(os.sep, 1)[0]

@@ -14,20 +14,20 @@ GRID_STEP_SIZE = 0.25
 # You can specify the overlap of consecutive spectrograms and the minimum
 # length of a valid signal chunk (in seconds). You can also combine a number
 # of extracted spectrograms for each prediction.
-SPEC_OVERLAP = 0
-SPEC_MINLEN = 1.0
-SPECS_PER_PREDICTION = 1
+SPEC_OVERLAP = 1
+SPEC_MINLEN = 1
+SPECS_PER_PREDICTION = 2
 
 # Adjusting the sigmoid sensitivity of the output layer can increase the
 # number of detections (but will most likely also increase the number of
 # false positives). You can set a minimum confidence threshold to suppress
 # predictions with low score.
 
-# The adjustment of the sigmoid sensitivity of the output layer can lead to an increase 
-# of detections (but will most likely also increase the number of false positives). 
+# The adjustment of the sigmoid sensitivity of the output layer can lead to an increase
+# of detections (but will most likely also increase the number of false positives).
 # You can set a minimum confidence threshold to suppress low score predictions.
 SENSITIVITY = 1.0
-MIN_CONFIDENCE = 0.1
+MIN_CONFIDENCE = 0
 
 # Loading a snapshot automatically sets the corresponding settings. Do not
 # change these settings at runtime!
@@ -64,8 +64,8 @@ def setModelSettings(s):
     if 'spec_fmax' in s:
         global SPEC_FMAX
         SPEC_FMAX = s['spec_fmax']
-        
-    if 'im_dim' in s:        
+
+    if 'im_dim' in s:
         global IM_DIM
         IM_DIM = s['im_dim']
 
