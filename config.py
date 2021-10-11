@@ -16,7 +16,7 @@ GRID_STEP_SIZE = 0.25
 # of extracted spectrograms for each prediction.
 SPEC_OVERLAP = 0
 SPEC_MINLEN = 1
-SPECS_PER_PREDICTION = 1
+SPECS_PER_PREDICTION = 20
 
 # Adjusting the sigmoid sensitivity of the output layer can increase the
 # number of detections (but will most likely also increase the number of
