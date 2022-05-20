@@ -15,8 +15,8 @@ GRID_STEP_SIZE = 0.25
 # length of a valid signal chunk (in seconds). You can also combine a number
 # of extracted spectrograms for each prediction.
 SPEC_OVERLAP = 1
-SPEC_MINLEN = 1
-SPECS_PER_PREDICTION = 2
+SPEC_MINLEN = 3
+SPECS_PER_PREDICTION = 0
 
 # Adjusting the sigmoid sensitivity of the output layer can increase the
 # number of detections (but will most likely also increase the number of
