@@ -270,7 +270,7 @@ def main():
         cfg.DEPLOYMENT_LOCATION = (args.lat, args.lon)
         cfg.DEPLOYMENT_WEEK = args.week
         cfg.SPEC_OVERLAP = min(2.9, max(0.0, args.overlap))
-        cfg.SPECS_PER_PREDICTION = 2
+        cfg.SPECS_PER_PREDICTION = 1
         cfg.SENSITIVITY = max(min(-0.25, args.sensitivity * -1), -2.0)
         cfg.MIN_CONFIDENCE = 0
         if len(args.o) == 0:
